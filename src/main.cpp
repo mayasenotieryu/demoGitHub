@@ -1,46 +1,64 @@
 #include <Arduino.h>
-#define Pin_sortie 15
-
-void maTache1(void *parametres)
+// Handle de la queue
+xQueueHandle queue;
+void tacheEnvoi(void *parametres)
 {
- int v1 = 0;
- static int v2 = 0;
- while (1) // boucle infinie
- {
- Serial.printf("%s : v1=%d v2=%d\n", pcTaskGetName(NULL), v1, v2);
- v1++;
- v2++;
- delay(500);
- }
+    int i = 100;
+    while (1)
+    {
+        if (xQueueSend(queue, &i, portMAX_DELAY) == pdPASS)
+        {
+            Serial.printf("Envoi %d\n", i);
+            i++;
+        }
+        else
+        {
+            Serial.printf("Envoi échec\n");
+        }
+        delay(1000);
+    }
 }
-
-void maTache2(void *parametres)
+void tacheReception(void *parametres)
 {
- int v1 = 0;
- static int v2 = 0;
- while (1) // boucle infinie
- {
- Serial.printf("%s : v1=%d v2=%d\n", pcTaskGetName(NULL), v1, v2);
- v1++;
- v2++;
- delay(500);
- }
+    int i;
+    while (1)
+    {
+        if (xQueueReceive(queue, &i, portMAX_DELAY) != pdTRUE)
+        {
+            Serial.printf("Réception échec\n");
+        }
+        else
+        {
+            Serial.printf("Réception %d\n", i);
+        }
+        delay(2000);
+    }
 }
-
 void setup()
 {
- Serial.begin(115200);
- Serial.printf("Initialisation\n");
- // Création de la tâche périodique
- xTaskCreate(maTache1, "Tâche 1", 10000, NULL, 2, NULL);
- xTaskCreate(maTache2, "Tâche 2", 10000, NULL, 2, NULL);
-    pinMode(Pin_sortie, OUTPUT);
+    Serial.begin(115200);
+    while (!Serial)
+        ;
+    Serial.printf("Départ\n");
+    // Création de la file
+    queue = xQueueCreate(5, sizeof(int));
+    xTaskCreate(
+        tacheEnvoi, /* Fonction de la tâche. */
+        "Envoi",    /* Nom de la tâche. */
+        10000,      /* Taille de la pile de la tâche */
+        NULL,       /* Paramètres de la tâche, NULL si pas de paramètre */
+        1,          /* Priorité de la tâche */
+        NULL);      /* Pointeur pour récupérer le « handle » de la tâche, optionnel */
+    xTaskCreate(
+        tacheReception, /* Fonction de la tâche. */
+        "Réception",    /* Nom de la tâche. */
+        10000,          /* Taille de la pile de la tâche */
+        NULL,           /* Paramètres de la tâche, NULL si pas de paramètre */
+        1,              /* Priorité de la tâche */
+        NULL);          /* Pointeur pour récupérer le « handle » de la tâche, optionnel */
+    vTaskDelete(NULL);
 }
 void loop()
 {
-    Serial.printf("1");
- static int i = 0;
- Serial.printf("Boucle principale : %d\n", i++);
- delay(1000);
- digitalWrite(Pin_sortie, LOW);
+    // Ne s'exécute pas
 }
