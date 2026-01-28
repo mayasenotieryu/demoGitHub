@@ -23,7 +23,7 @@ void tacheReception(void *parametres)
     int i;
     while (1)
     {
-        if (xQueueReceive(queue, &i, portMAX_DELAY) != pdTRUE)
+        if (xQueueReceive(queue, &i, 0) != pdTRUE)
         {
             Serial.printf("Réception échec\n");
         }
