@@ -1,10 +1,16 @@
 #include <Arduino.h>
+SemaphoreHandle_t mutex;
 void tache1(void *parametres)
 {
     int i = 0;
+    mutex = xSemaphoreCreateMutex();
     while (1)
     {
-        Serial.printf("Dans la tâche 1 : ", i);
+        if (xSemaphoreTake(mutex, INFINITY))
+        {
+            ok = xSemaphoreGive(mutex);
+        }
+        Serial.printf("Dans la tâche 1 : ");
         delay(1);
         Serial.printf("%d\n", i);
         i++;
@@ -14,9 +20,14 @@ void tache1(void *parametres)
 void tache2(void *parametres)
 {
     int i = 100;
+    mutex = xSemaphoreCreateMutex();
     while (1)
     {
-        Serial.printf("Dans la tâche 2 : ", i);
+        if (xSemaphoreTake(mutex, INFINITY))
+        {
+            ok = xSemaphoreGive(mutex);
+        }
+        Serial.printf("Dans la tâche 2 : ");
         delay(1);
         Serial.printf("%d\n", i);
         i++;
@@ -29,6 +40,9 @@ void setup()
     while (!Serial)
         ;
     Serial.printf("Départ\n");
+
+    // mutex = xSemaphoreCreateMutex();
+
     xTaskCreate(
         tache1,    /* Fonction de la tâche. */
         "Tâche 1", /* Nom de la tâche. */
