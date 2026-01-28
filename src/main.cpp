@@ -15,7 +15,7 @@ void tacheEnvoi(void *parametres)
         {
             Serial.printf("Envoi échec\n");
         }
-        delay(1000);
+        delay(2000);
     }
 }
 void tacheReception(void *parametres)
@@ -31,7 +31,7 @@ void tacheReception(void *parametres)
         {
             Serial.printf("Réception %d\n", i);
         }
-        delay(2000);
+        delay(1000);
     }
 }
 void setup()
