@@ -41,7 +41,7 @@ void setup()
         ;
     Serial.printf("Départ\n");
     // Création de la file
-    queue = xQueueCreate(5, sizeof(int));
+    queue = xQueueCreate(10, sizeof(int));
     xTaskCreate(
         tacheEnvoi, /* Fonction de la tâche. */
         "Envoi",    /* Nom de la tâche. */
