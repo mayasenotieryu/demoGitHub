@@ -1,8 +1,9 @@
 #include <Arduino.h>
+
 void tachePeriodique(void *pvParameters)
 {
  TickType_t xLastWakeTime;
- double x = 0, y = 0;
+ double x = 0, y = 0, s;
  // Lecture du nombre de ticks quand la tâche débute
  xLastWakeTime = xTaskGetTickCount();
  while (1)
