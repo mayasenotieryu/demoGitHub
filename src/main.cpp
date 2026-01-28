@@ -1,13 +1,15 @@
 #include <Arduino.h>
+#define Pin_sortie 15
 
 void tachePeriodique(void *pvParameters)
 {
  TickType_t xLastWakeTime;
- double x = 0, y = 0, s;
+ double x = 0, y = 0;
  // Lecture du nombre de ticks quand la tâche débute
  xLastWakeTime = xTaskGetTickCount();
  while (1)
  {
+    digitalWrite(Pin_sortie, HIGH);
  TickType_t debCalcul = xTaskGetTickCount();
  // Des calculs pour que la tâche occupe le processeur
  int nbTour = 3000 + rand()%3000;
@@ -28,6 +30,7 @@ void tachePeriodique(void *pvParameters)
  // Endort la tâche pendant le temps restant par rapport au réveil,
  // ici 200ms, donc la tâche s'effectue toutes les 200ms
  vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(200)); // toutes les 200 ms
+
  }
 }
 void setup()
@@ -36,10 +39,13 @@ void setup()
  Serial.printf("Initialisation\n");
  // Création de la tâche périodique
  xTaskCreate(tachePeriodique, "Tâche périodique", 10000, NULL, 2, NULL);
+    pinMode(Pin_sortie, OUTPUT);
 }
 void loop()
 {
+    Serial.printf("1");
  static int i = 0;
  Serial.printf("Boucle principale : %d\n", i++);
  delay(1000);
+ digitalWrite(Pin_sortie, LOW);
 }
