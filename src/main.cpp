@@ -3,16 +3,17 @@ SemaphoreHandle_t mutex;
 void tache1(void *parametres)
 {
     int i = 0;
+    int ok;
     mutex = xSemaphoreCreateMutex();
     while (1)
     {
         if (xSemaphoreTake(mutex, INFINITY))
         {
+            Serial.printf("Dans la tâche 1 : ");
+            delay(1);
+            Serial.printf("%d\n", i);
             ok = xSemaphoreGive(mutex);
         }
-        Serial.printf("Dans la tâche 1 : ");
-        delay(1);
-        Serial.printf("%d\n", i);
         i++;
         delay(1000);
     }
@@ -20,16 +21,17 @@ void tache1(void *parametres)
 void tache2(void *parametres)
 {
     int i = 100;
+    int ok;
     mutex = xSemaphoreCreateMutex();
     while (1)
     {
         if (xSemaphoreTake(mutex, INFINITY))
         {
+            Serial.printf("Dans la tâche 2 : ");
+            delay(1);
+            Serial.printf("%d\n", i);
             ok = xSemaphoreGive(mutex);
         }
-        Serial.printf("Dans la tâche 2 : ");
-        delay(1);
-        Serial.printf("%d\n", i);
         i++;
         delay(1000);
     }
